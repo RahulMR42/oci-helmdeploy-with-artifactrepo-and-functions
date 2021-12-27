@@ -1,0 +1,7 @@
+schema_version: 20180708
+name: fnapplyhelmchart
+version: 0.0.7
+runtime: docker
+entrypoint: /python/bin/fdk /function/func.py handler
+memory: 512
+timeout: 300

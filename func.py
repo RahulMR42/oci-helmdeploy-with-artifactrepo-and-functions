@@ -28,3 +28,7 @@ def handler(ctx, data: io.BytesIO=None):
             headers={"Content-Type": "application/json"})
     except Exception as error:
         logging.getLogger().info(f'Exception - {error}')
+        return response.Response(
+            ctx, 
+            response_data=json.dumps({"status": f'Exception - str({error})'}),
+            headers={"Content-Type": "application/json"})

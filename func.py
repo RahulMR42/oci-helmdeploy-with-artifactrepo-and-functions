@@ -27,13 +27,6 @@ class oci_cli_actions():
                 version=artifact_version
             )
             logging.getLogger().info(get_generic_artifact_content_by_path_response.data)
-
-
- 
-
-# Get the data from response
-print(get_generic_artifact_content_by_path_response.data)
-            logging.getLogger().info(oci_artifact_client)
         except Exception as error:
             logging.getLogger().info(f'Exception while downloading artifact - str({error})')
         

@@ -11,11 +11,19 @@ import oci
 
 from fdk import response
 
-class oci_artifact():
+class oci_cli_actions():
     def __init__(self,region,signer):
         """Init with  a region and resource principal signer"""
         self.region = region
         self.signer = signer
+
+    def download_artifact(self,artifact_repo_id,artifact_path,artifact_version):
+        try:
+            logging.getLogger().info("Downloading the artifact")
+        except Exception as error:
+            logging.getLogger().info(f'Exception while downloading artifact - str({error})')
+
+
         
 
 
@@ -30,8 +38,9 @@ def handler(ctx, data: io.BytesIO=None):
         signer = oci.auth.signers.get_resource_principals_signer()
         os.environ['OCI_CLI_AUTH']="resource_principal" #set OCI CLI to use resource_principal authorization
         logging.getLogger().info(f'Input Params Repo = {artifact_repo_id} Path = {artifact_path}, Version = {artifact_version}')
-        artifact_handler = oci_artifact(region,signer)
-        logging.getLogger.info(artifact_handler)
+        artifact_handler = oci_cli_actions(region,signer)
+        artifact_handler.download_artifact(artifact_repo_id,artifact_path,artifact_version)
+        logging.getLogger().info(artifact_handler)
         return response.Response(
             ctx, 
             response_data=json.dumps({"status": "Hello World! with customImage"}),

@@ -20,10 +20,10 @@ class oci_cli_actions():
     def download_artifact(self,artifact_repo_id,artifact_path,artifact_version):
         try:
             logging.getLogger().info("Downloading the artifact")
+            oci_artifact_client = oci.generic_artifacts_content.GenericArtifactsContentClient(config={'region': region}, signer=signer)
+            logging.getLogger().info(oci_artifact_client)
         except Exception as error:
             logging.getLogger().info(f'Exception while downloading artifact - str({error})')
-
-
         
 
 

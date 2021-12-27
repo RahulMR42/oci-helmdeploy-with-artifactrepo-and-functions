@@ -13,7 +13,9 @@ def handler(ctx, data: io.BytesIO=None):
     body = json.loads(data.getvalue()) 
     logging.getLogger().info("Fetching the information")
     artifact_repo_id = body[0]['data']['stateChange']['current']['repositoryId']
-    logging.getLogger().info(f'Input Params Repo = {artifact_repo_id}')
+    artifact_path = body[0]['data']['stateChange']['current']['artifactPath']
+    artifact_version = body[0]['data']['stateChange']['current']['version']
+    logging.getLogger().info(f'Input Params Repo = {artifact_repo_id} Path = {artifact_path}, Version = {artifact_version}')
     
     return response.Response(
         ctx, 

@@ -1,5 +1,8 @@
 FROM oraclelinux:7-slim
 
+ENV PATH="/usr/local/bin:${PATH}" && \
+    VERIFY_CHECKSUM=false
+
 RUN  yum install -y git && \
      yum-config-manager --disable ol7_developer_EPEL && \
      yum install -y oracle-epel-release-el7 python36 && \
@@ -9,7 +12,7 @@ RUN  yum install -y git && \
      curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash && \ 
      mv /usr/local/bin/helm /usr/bin/helm
 
-ENV PATH="/usr/local/bin:${PATH}"
+
 
 WORKDIR /function
 ADD requirements.txt .

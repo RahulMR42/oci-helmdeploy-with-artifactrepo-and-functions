@@ -58,7 +58,7 @@ class oci_cli_actions():
             logging.getLogger().info("Attempting Helm install")
             outcome = execute_shell_command(['helm','history',chart_name])
             logging.getLogger().info("helm current history - " + str(outcome))
-            outcome = execute_shell_command(['helm','upgrade','--install',chart_name.,f'/tmp/{artifact_path}'])
+            outcome = execute_shell_command(['helm','upgrade','--install',chart_name,f'/tmp/{artifact_path}'])
             outcome = execute_shell_command(['helm','history',chart_name])
             logging.getLogger().info("helm post deployment history - " + str(outcome))
 

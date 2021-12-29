@@ -40,7 +40,6 @@ class oci_cli_actions():
                 for chunk in get_generic_artifact_content_by_path_response.data.raw.stream(1024 * 1024, decode_content=False):
                     target_file.write(chunk)
             outcome = execute_shell_command(['ls','-lth','/tmp'])
-
             logging.getLogger().info("Values" + str(outcome))
             
             

@@ -35,7 +35,7 @@ class oci_cli_actions():
                 artifact_path=artifact_path,
                 version=artifact_version
             )
-            logging.getLogger().info(f"attemtping to write to path /tmp/{artifact_path}.zip")
+            logging.getLogger().info(f"attemtping to write to path /tmp/{artifact_path}")
             with open(f'/tmp/{artifact_path}', 'wb') as target_file:
                 for chunk in get_generic_artifact_content_by_path_response.data.raw.stream(1024 * 1024, decode_content=False):
                     target_file.write(chunk)
@@ -46,7 +46,7 @@ class oci_cli_actions():
             logging.getLogger().info(f'Exception while downloading artifact - {error}')
 
     
-    def oke_deployment(self,oke_cluster_id,artifact_path):
+    def oke_deployment(self,oke_cluster_id,artifact_path,artifact_version):
         try:
             ce_client = oci.container_engine.ContainerEngineClient(config={'region': self.region}, signer=self.signer)
             config_response = ce_client.create_kubeconfig(oke_cluster_id)
@@ -55,7 +55,7 @@ class oci_cli_actions():
             os.environ['KUBECONFIG'] = '/tmp/kubeconfig'
             outcome = execute_shell_command(['chmod','go-r','/tmp/kubeconfig'])
             chart_name = artifact_path.strip('.zip').replace("_","-")
-            logging.getLogger().info("Attempting Helm install")
+            logging.getLogger().info(f"Attempting Helm install with version {artifact_version}")
             outcome = execute_shell_command(['helm','history',chart_name])
             logging.getLogger().info("helm current history - " + str(outcome))
             outcome = execute_shell_command(['helm','upgrade','--install',chart_name,f'/tmp/{artifact_path}'])
@@ -81,7 +81,7 @@ def handler(ctx, data: io.BytesIO=None):
         logging.getLogger().info(f'Input Params Repo = {artifact_repo_id} Path = {artifact_path}, Version = {artifact_version}')
         artifact_handler = oci_cli_actions(region,signer)
         artifact_handler.download_artifact(artifact_repo_id,artifact_path,artifact_version)
-        artifact_handler.oke_deployment(oke_cluster_id,artifact_path)
+        artifact_handler.oke_deployment(oke_cluster_id,artifact_path,artifact_version)
         logging.getLogger().info(artifact_handler)
         return response.Response(
             ctx, 

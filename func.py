@@ -26,7 +26,11 @@ class oci_cli_actions():
                 artifact_path=artifact_path,
                 version=artifact_version
             )
-            logging.getLogger().info("data" + get_generic_artifact_content_by_path_response.data)
+            with open(f'/tmp/{artifact_path}', 'w') as f:
+                f.write(get_generic_artifact_content_by_path_response.data)
+
+            logging.getLogger().info(get_generic_artifact_content_by_path_response.data)
+            logging.getLogger().info("did you get?")
         except Exception as error:
             logging.getLogger().info(f'Exception while downloading artifact - str({error})')
         

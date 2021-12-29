@@ -46,15 +46,21 @@ class oci_cli_actions():
             logging.getLogger().info(f'Exception while downloading artifact - {error}')
 
     
-    def oke_deployment(self,oke_cluster_id):
+    def oke_deployment(self,oke_cluster_id,chart_name):
         try:
             ce_client = oci.container_engine.ContainerEngineClient(config={'region': self.region}, signer=self.signer)
             config_response = ce_client.create_kubeconfig(oke_cluster_id)
             with open('/tmp/kubeconfig', 'w') as file:
                 file.write(config_response.data.text)
             os.environ['KUBECONFIG'] = '/tmp/kubeconfig'
-            outcome = execute_shell_command(['helm','ls'])
-            logging.getLogger().info("helm check" + str(outcome))
+            outcome = execute_shell_command(['chmod','go-r','/tmp/kubeconfig'])
+            logging.getLogger().info("Attempting Helm install")
+            outcome = execute_shell_command(['helm','history',chart_name])
+            logging.getLogger().info("helm current history - " + str(outcome))
+            outcome = execute_shell_command(['helm','upgrade','--install',chart_name,f'/tmp/{chart_name}.zip'])
+            outcome = execute_shell_command(['helm','history',chart_name])
+            logging.getLogger().info("helm post deployment history - " + str(outcome))
+
         except Exception as error:
             logging.getLogger().info(f'Exception while deploying to OKE - {error}')
         
@@ -74,7 +80,7 @@ def handler(ctx, data: io.BytesIO=None):
         logging.getLogger().info(f'Input Params Repo = {artifact_repo_id} Path = {artifact_path}, Version = {artifact_version}')
         artifact_handler = oci_cli_actions(region,signer)
         artifact_handler.download_artifact(artifact_repo_id,artifact_path,artifact_version)
-        artifact_handler.oke_deployment(oke_cluster_id)
+        artifact_handler.oke_deployment(oke_cluster_id,artifact_path)
         logging.getLogger().info(artifact_handler)
         return response.Response(
             ctx, 

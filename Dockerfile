@@ -1,7 +1,7 @@
 FROM oraclelinux:7-slim
 
-ENV PATH="/usr/local/bin:${PATH}" && \
-    VERIFY_CHECKSUM=false
+ENV PATH="/usr/local/bin:${PATH}"
+ENV VERIFY_CHECKSUM=false
 
 RUN  yum install -y git && \
      yum-config-manager --disable ol7_developer_EPEL && \

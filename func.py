@@ -26,8 +26,14 @@ class oci_cli_actions():
                 artifact_path=artifact_path,
                 version=artifact_version
             )
+            logging.getLogger().info(f"attemtping to write to path /tmp/{artifact_path}.zip")
+            with open(f'/tmp/{artifact_path}.zip', 'wb') as target_file:
+                for chunk in get_generic_artifact_content_by_path_response.data.raw.stream(1024 * 1024, decode_content=False):
+                    target_file.write(chunk)
+
+
             logging.getLogger().info("did you get?")
-            logging.getLogger().info(get_generic_artifact_content_by_path_response.data)
+            
             
         except Exception as error:
             logging.getLogger().info(f'Exception while downloading artifact - str({error})')

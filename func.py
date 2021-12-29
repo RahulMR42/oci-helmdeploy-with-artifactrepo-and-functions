@@ -54,7 +54,7 @@ class oci_cli_actions():
                 file.write(config_response.data.text)
             os.environ['KUBECONFIG'] = '/tmp/kubeconfig'
             outcome = execute_shell_command(['chmod','go-r','/tmp/kubeconfig'])
-            chart_name = artifact_path.strip('.zip')
+            chart_name = artifact_path.strip('.zip').replace("_","-")
             logging.getLogger().info("Attempting Helm install")
             outcome = execute_shell_command(['helm','history',chart_name])
             logging.getLogger().info("helm current history - " + str(outcome))

@@ -36,7 +36,7 @@ class oci_cli_actions():
                 version=artifact_version
             )
             logging.getLogger().info(f"attemtping to write to path /tmp/{artifact_path}.zip")
-            with open(f'/tmp/{artifact_path}.zip', 'wb') as target_file:
+            with open(f'/tmp/{artifact_path}', 'wb') as target_file:
                 for chunk in get_generic_artifact_content_by_path_response.data.raw.stream(1024 * 1024, decode_content=False):
                     target_file.write(chunk)
             outcome = execute_shell_command(['ls','-ltrh','/tmp/'])
@@ -57,7 +57,7 @@ class oci_cli_actions():
             logging.getLogger().info("Attempting Helm install")
             outcome = execute_shell_command(['helm','history',chart_name])
             logging.getLogger().info("helm current history - " + str(outcome))
-            outcome = execute_shell_command(['helm','upgrade','--install',chart_name,f'/tmp/{chart_name}.zip'])
+            outcome = execute_shell_command(['helm','upgrade','--install',chart_name.strip('.zip'),f'/tmp/{chart_name}.zip'])
             outcome = execute_shell_command(['helm','history',chart_name])
             logging.getLogger().info("helm post deployment history - " + str(outcome))
 

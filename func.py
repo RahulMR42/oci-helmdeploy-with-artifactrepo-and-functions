@@ -39,7 +39,7 @@ class oci_cli_actions():
             with open(f'/tmp/{artifact_path}.zip', 'wb') as target_file:
                 for chunk in get_generic_artifact_content_by_path_response.data.raw.stream(1024 * 1024, decode_content=False):
                     target_file.write(chunk)
-            outcome = execute_shell_command(['ls','ltrh','/tmp/'])
+            outcome = execute_shell_command(['ls','-ltrh','/tmp/'])
             logging.getLogger().info("Temp file information " + str(outcome))
         
         except Exception as error:

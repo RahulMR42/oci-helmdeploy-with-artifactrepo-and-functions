@@ -6,10 +6,19 @@ import io
 import os
 import json
 import logging
+import subprocess
 
 import oci
 
 from fdk import response
+
+def execute_shell_command(cmd):
+    try:
+        return (subprocess.run(cmd, stdout=subprocess.PIPE).stdout.decode('utf-8'))
+
+    except Exception as error:
+        logging.getLogger().info(f'Exception while executing  shell commands - str({error})')
+   
 
 class oci_cli_actions():
     def __init__(self,region,signer):
@@ -30,9 +39,9 @@ class oci_cli_actions():
             with open(f'/tmp/{artifact_path}.zip', 'wb') as target_file:
                 for chunk in get_generic_artifact_content_by_path_response.data.raw.stream(1024 * 1024, decode_content=False):
                     target_file.write(chunk)
+            outcome = execute_shell_command(['ls','-lth','/tmp'])
 
-
-            logging.getLogger().info("did you get?")
+            logging.getLogger().info("Values" + str(outcome))
             
             
         except Exception as error:

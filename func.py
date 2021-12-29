@@ -39,12 +39,24 @@ class oci_cli_actions():
             with open(f'/tmp/{artifact_path}.zip', 'wb') as target_file:
                 for chunk in get_generic_artifact_content_by_path_response.data.raw.stream(1024 * 1024, decode_content=False):
                     target_file.write(chunk)
-            outcome = execute_shell_command(['helm','ls'])
-            logging.getLogger().info("Values" + str(outcome))
-            
-            
+            outcome = execute_shell_command(['ls','ltrh','/tmp/*.zip'])
+            logging.getLogger().info("Temp file information " + str(outcome))
+        
         except Exception as error:
-            logging.getLogger().info(f'Exception while downloading artifact - str({error})')
+            logging.getLogger().info(f'Exception while downloading artifact - {error}')
+
+    
+    def oke_deployment(self,oke_cluster_id):
+        try:
+            ce_client = oci.container_engine.ContainerEngineClient(config={'region': self.region}, signer=self.signer)
+            config_response = ce_client.create_kubeconfig(oke_cluster_id)
+            with open('/tmp/kubeconfig', 'w') as file:
+                file.write(config_response.data.text)
+            os.environ['KUBECONFIG'] = '/tmp/kubeconfig'
+            outcome = execute_shell_command(['helm','ls'])
+            logging.getLogger().info("helm check" + str(outcome))
+        except Exception as error:
+            logging.getLogger().info(f'Exception while deploying to OKE - {error}')
         
 
 
@@ -56,11 +68,13 @@ def handler(ctx, data: io.BytesIO=None):
         artifact_path = body[0]['data']['stateChange']['current']['artifactPath']
         artifact_version = body[0]['data']['stateChange']['current']['version']
         region = os.environ['oci_region']
+        oke_cluster_id = os.environ['oke_cluster_id']
         signer = oci.auth.signers.get_resource_principals_signer()
         os.environ['OCI_CLI_AUTH']="resource_principal" #set OCI CLI to use resource_principal authorization
         logging.getLogger().info(f'Input Params Repo = {artifact_repo_id} Path = {artifact_path}, Version = {artifact_version}')
         artifact_handler = oci_cli_actions(region,signer)
         artifact_handler.download_artifact(artifact_repo_id,artifact_path,artifact_version)
+        artifact_handler.oke_deployment(oke_cluster_id)
         logging.getLogger().info(artifact_handler)
         return response.Response(
             ctx, 

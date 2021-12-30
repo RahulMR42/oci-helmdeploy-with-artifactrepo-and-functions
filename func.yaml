@@ -7,4 +7,4 @@ memory: 512
 timeout: 300
 config:
   oci_region: eu-frankfurt-1
-  oke_cluster_id: ocid1.cluster.oc1.eu-frankfurt-1.aaaaaaaazolnep3sgz55a2dwp2zdraql2v65mjmea5vipot4uc6u2erwehaq
+  oke_cluster_id: ocid1.cluster.oc1.eu-frankfurt-1.aaaaaaaag3nfzmqmaszedroiyo4fnawuqas37kap5wtmhrgphcduu5wcdjoa

@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "sample-fastapi-app.fullname" . }}
-  labels:
-    {{- include "sample-fastapi-app.labels" . | nindent 4 }}
+  name: python-sample-app-service
+  namespace: ${namespace}
+  annotations: 
+    service.beta.kubernetes.io/oci-load-balancer-shape: "10Mbps"
 spec:
-  type: {{ .Values.service.type }}
+  type: LoadBalancer
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
+    - port: 80
       protocol: TCP
-      name: http
+      targetPort: 3000
   selector:
-    {{- include "sample-fastapi-app.selectorLabels" . | nindent 4 }}
+    app: python-sample-app

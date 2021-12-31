@@ -357,6 +357,8 @@ oci artifacts generic artifact upload-by-path --repository-id <OCI Artifact Repo
 
 - You may use values from Vault as an input to functions and can use as an input to helm too.
 - Dont forget to clean up the resources using helm delete <chart name> or kubectl delete <component>
+- If you want to test again ,change the chart in the sample application ,do a helm packge and upload to artifact repo.
+- You update the application via the python code (main.py) ,do a new docker build ,update the chart values.yaml image tag and upload too.
 
 
 

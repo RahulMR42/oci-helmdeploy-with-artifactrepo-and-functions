@@ -273,8 +273,90 @@ ssh -i oci_rsa -p <LOCAL PORT USED IN THE ABOVE COMMAND> opc@localhost
 
 -----------
 
-📗 Setup OCI Artifact Registry repo. 
+- To do so use your local machine where you have OCI CLI & Helm installed or use OCI Cloud shell .
+
+- Clone the sample application.
+
+```
+$ git clone https://github.com/RahulMR42/sample-python-app-with-helm-chart 
+```
+
+- Build docker image.
+
+```
+$ cd  sample-python-app-with-helm-chart
+$ docker login <dtr url> (Provide credentials when prompted)
+$ docker build -t <dockerurl/sample-python-app:<tag> .
+$ docker push <dockerurl/sample-python-app:<tag>
+```
+
+- Update the values for helm chart.
+
+```
+$ vi helmchart/sample-fastapi-app/values.yaml
+
+```
+
+  -  Update below values 
+
+  ```
+  namespace
+  image > repository:
+  image > tag
+
+  ```    
+
+  - Create a helm package
+
+  ```
+  $ helm package helmchart/sample-fastapi-app
+  ```
+
+![](images/helm1.png)
+
+- Now we will push to the artfact using OCI CLI.
+
+
+```
+oci artifacts generic artifact upload-by-path --repository-id <OCI Artifact Repo OCID> --artifact-path sample-fastapi.zip --artifact-version <VERSION in numbers > --content-body <PATH TO HELM PACKAGE>
+```
+
+- Ensure to use the same path name as that of  referred in the service connector query.
+
+![](images/helm2.png)
+
+- Ensure the upload is successfull via the artifact repo UI .
+
+![](images/artifact_ui.png)
+
+
+
+📗 Verify the outcome
 
 -----------
+
+- Validate this via the jump hosts using kubectl command.
+
+![](images/kubect1.png)
+
+- Validate the resources and fetch the loadbalancer IP to test the application.
+
+![](images/kubectl2.png)
+
+- You can validate the URL via browser as well ,as in this case we are using public loadbalancer (use http://<LoadBalanceIP>).
+
+![](images/lb1.png)
+
+- You can verify the function invokvation via the function application logs too .
+- Use OCI Console >Applicatons >Logs >Loger name 
+
+![](images/logs1.png)
+
+
+🎵 Tail end
+
+- You may use values from Vault as an input to functions and can use as an input to helm too.
+- Dont forget to clean up the resources using helm delete <chart name> or kubectl delete <component>
+
 
 

@@ -11,6 +11,11 @@ A sample illustration of helm based installation of OCI OKE,based on artifact up
 
 - The whole interaction is encompassed inside a private Virtual cloud network subnet.
 
+Global flow diagram
+
+---------
+
+![](images/OCI_HELM_FUNCTION_ARTIFACT.png)
 
 📗 Setup Dynamic groups 
 
@@ -172,18 +177,20 @@ $ fn deploy -v --app <FN APPLICATION NAME>
 
 - In the configure source part ,select Artifact Registry and select the events are as Generic Artifact update /update by path and upload by path.
 
-- Add an additional filter ,select the Attribute as source and enter * sample-fastapi.zip * .Here we using a wildcard selection with a name ,which will be used as a target path while we will be uploading the helm artifacts to OCI artifacts repo. 
+- Add an additional query and put data.request.path attribute with * <OCID of REP> *
 
-![](images/sc2.png)
+- Add One more  additional filter ,select the Attribute as source and enter * sample-fastapi.zip * .Here we using a wildcard selection with a name ,which will be used as a target path while we will be uploading the helm artifacts to OCI artifacts repo. 
+
+![](images/sc_basic
 
 Or You may switch to Advance mode and paste the below query 
 
 ```
-search "<OCI Compartment ID>/_Audit_Include_Subcompartment" | (type='com.oraclecloud.artifacts.updaterepository' or type='com.oraclecloud.artifacts.updategenericartifactbypath' or type='com.oraclecloud.artifacts.putgenericartifactcontentbypath' or type='com.oraclecloud.artifacts.updategenericartifact') and (source='*sample-fastapi.zip*')
+search "<OCID of OCI Compartment>/_Audit_Include_Subcompartment" | (type='com.oraclecloud.artifacts.updategenericartifactbypath' or type='com.oraclecloud.artifacts.putgenericartifactcontentbypath' or type='com.oraclecloud.artifacts.updategenericartifact') and (data.request.path='*<OCI of Artifact Repo>*') and (source='*sample-fastapi*')
 
 ```
 
-![](images/sc3.png)
+![](images/sc_query.png)
 
 - Skip configure Tasks.
 - At the target section select the application and functions.
